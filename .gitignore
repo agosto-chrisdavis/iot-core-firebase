@@ -1,0 +1,17 @@
+node_modules
+temp
+.tmp
+dist
+.idea
+temp.*
+docs
+doc
+coverage
+*.log
+bundle.js
+service.json
+config.json
+configs
+public/*.*
+package-lock.json
+.firebaserc
