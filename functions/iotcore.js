@@ -204,9 +204,6 @@ class IotCore {
 
 }
 
-IotCore.DEVICE_STATE_TOPIC = 'device-state';
-IotCore.DEVICE_LOGS_TOPIC = 'device-logs';
-
 if(typeof module !== 'undefined' && module.exports) {
   module.exports = IotCore;
 }

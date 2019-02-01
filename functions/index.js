@@ -26,6 +26,6 @@ exports.fnVersion = onCorsHttpsRequest((request, response) => DeviceManager.fnVe
 
 exports.registerIotDevice = onCorsHttpsRequest((request, response) => DeviceManager.registerIotDevice(admin,iotCore,request,response));
 
-exports.onDeviceState = onPubsubRequest(IotCore.DEVICE_STATE_TOPIC, (data, context) => DeviceManager.onDeviceState(admin, iotCore, data, context));
+exports.onDeviceState = onPubsubRequest(DeviceManager.DEVICE_STATE_TOPIC, (data, context) => DeviceManager.onDeviceState(admin, iotCore, data, context));
 
-exports.onDeviceLogs = onPubsubRequest(IotCore.DEVICE_LOGS_TOPIC, (data, context) => DeviceManager.onDeviceLogs(admin, data, context));
+exports.onDeviceLogs = onPubsubRequest(DeviceManager.DEVICE_LOGS_TOPIC, (data, context) => DeviceManager.onDeviceLogs(admin, data, context));

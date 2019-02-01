@@ -82,7 +82,8 @@ class DeviceManager {
           });
       }
     }
-    response.status(401).send('Invalid Parameters');
+    console.warn('Invalid token');
+    response.status(401).send('Invalid token');
     return Promise.resolve({});
   }
 
@@ -103,20 +104,6 @@ class DeviceManager {
 
 
   /**
-   * save device state to firebase db
-   * @param {admin.app.App} admin  @see {@link https://firebase.google.com/docs/reference/admin/node/admin.app.App}
-   * @param {Object} data
-   * @param deviceId
-   * @return {Promise<Object>}
-   */
-  static saveDeviceState(admin,data,deviceId) {
-    return admin.database()
-      .ref(`states/${deviceId}`)
-      .set(data)
-      .then(()=>data);
-  }
-
-  /**
    * pub/sub event handler for device state
    * @param {admin.app.App} admin  @see {@link https://firebase.google.com/docs/reference/admin/node/admin.app.App}
    * @param {IotCore} iotCore
@@ -135,11 +122,6 @@ class DeviceManager {
     //console.log(data);
     const deviceId = data.attributes.deviceId;
     console.log(`device state for ${deviceId} ${JSON.stringify(data.json)}`);
-    if(deviceId) {
-      return this.saveDeviceState(admin,data.json,deviceId)
-    } else {
-      console.warn(`Invalid deviceId ${deviceId}`)
-    }
     return Promise.resolve(false)
   }
 
@@ -185,6 +167,7 @@ class DeviceManager {
    * @returns {Promise<LogWriteResponse>}  returns Promise containing LogWriteResponse  @see {@link https://cloud.google.com/nodejs/docs/reference/logging/1.2.x/global#LogWriteResponse}
    */
   static writeLogToStackDriver(batch, tags) {
+    //return Promise.resolve(true)
     const newTagsObj = Object.assign({}, ...tags);
     const metadata = {
       resource: {
@@ -198,6 +181,8 @@ class DeviceManager {
 
 }
 
+DeviceManager.DEVICE_STATE_TOPIC = 'android-state';
+DeviceManager.DEVICE_LOGS_TOPIC = 'android-logs';
 DeviceManager.apiAccessTokens = [];
 DeviceManager.apiAccessTokens.push(API_TOKEN);
 DeviceManager.log = log;
