@@ -6,11 +6,14 @@ const serviceAccount = require("./service.json");
 const IotCore = require('./iotcore');
 const DeviceManager = require('./manager');
 
-/* @type {admin.app.App} */
+/*
+// don't need admin unless we use the db
+@type {admin.app.App}
 const admin = require("firebase-admin");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)/*, databaseURL: fb_database_url*/
+  credential: admin.credential.cert(serviceAccount)
 });
+*/
 
 const iotCore = new IotCore(serviceAccount);
 
@@ -24,8 +27,8 @@ function onPubsubRequest(topic, callback) {
 
 exports.fnVersion = onCorsHttpsRequest((request, response) => DeviceManager.fnVersion(response));
 
-exports.registerIotDevice = onCorsHttpsRequest((request, response) => DeviceManager.registerIotDevice(admin,iotCore,request,response));
+exports.registerIotDevice = onCorsHttpsRequest((request, response) => DeviceManager.registerIotDevice(iotCore,request,response));
 
-exports.onDeviceState = onPubsubRequest(DeviceManager.DEVICE_STATE_TOPIC, (data, context) => DeviceManager.onDeviceState(admin, iotCore, data, context));
+exports.onDeviceState = onPubsubRequest(DeviceManager.DEVICE_STATE_TOPIC, (data, context) => DeviceManager.onDeviceState( iotCore, data, context));
 
-exports.onDeviceLogs = onPubsubRequest(DeviceManager.DEVICE_LOGS_TOPIC, (data, context) => DeviceManager.onDeviceLogs(admin, data, context));
+exports.onDeviceLogs = onPubsubRequest(DeviceManager.DEVICE_LOGS_TOPIC, (data, context) => DeviceManager.onDeviceLogs( data, context));

@@ -27,14 +27,13 @@ class DeviceManager {
   }
 
   /**
-   *
-   * @param {admin.app.App} admin  @see {@link https://firebase.google.com/docs/reference/admin/node/admin.app.App}
+   * sends command to an iot device
    * @param {IotCore} iotCore
    * @param {String} deviceId
    * @param {Object} data
    * @return {Promise<Object>}
    */
-  static sendCommandToIotDevice(admin,iotCore,deviceId,data) {
+  static sendCommandToIotDevice(iotCore,deviceId,data) {
     // send normal command
     return iotCore.initializeClient()
       .then(()=>iotCore.sendDeviceCommand(deviceId,REGISTRY_ID,data))
@@ -55,13 +54,13 @@ class DeviceManager {
   }
 
   /**
-   * @param {admin.app.App} admin  @see {@link https://firebase.google.com/docs/reference/admin/node/admin.app.App}
+   * register a new device into iot core
    * @param {IotCore} iotCore
    * @param {Request} request @see {@link http://expressjs.com/en/api.html#req}
    * @param {Response} response @see {@link http://expressjs.com/en/api.html#res}
    * @return {Promise<any>}
    */
-  static registerIotDevice(admin,iotCore, request, response) {
+  static registerIotDevice(iotCore, request, response) {
     if(this.hasValidToken(request)) {
       if(request.body.deviceId && request.body.rsaCertificate) {
         const deviceId = request.body.deviceId;
@@ -88,15 +87,14 @@ class DeviceManager {
   }
 
   /**
-   *
-   * @param {admin.app.App} admin  @see {@link https://firebase.google.com/docs/reference/admin/node/admin.app.App}
+   * reset iot device
    * @param {IotCore} iotCore
    * @param {string} deviceId
    * @returns {Promise<object>}
    */
-  static resetIotDevice(admin,iotCore,deviceId) {
+  static resetIotDevice(iotCore,deviceId) {
     const data = {reset:true};
-    console.log(`Reseting deciceId ${deviceId} and deviceKey ${deviceKey}`);
+    console.log(`Resseting deciceId ${deviceId} and deviceKey ${deviceKey}`);
     return iotCore.initializeClient()
       .then(()=>iotCore.sendDeviceCommand(deviceId,REGISTRY_ID,data))
       .then(()=>iotCore.deleteDevice(deviceId,REGISTRY_ID))
@@ -105,13 +103,12 @@ class DeviceManager {
 
   /**
    * pub/sub event handler for device state
-   * @param {admin.app.App} admin  @see {@link https://firebase.google.com/docs/reference/admin/node/admin.app.App}
    * @param {IotCore} iotCore
    * @param {functions.pubsub.Message} data @see https://firebase.google.com/docs/reference/functions/functions.pubsub.Message
    * @param {EventContext} context @see https://firebase.google.com/docs/reference/functions/functions.EventContext
    * @returns {Promise<Object>}
    */
-  static onDeviceState(admin,iotCore,data,context) {
+  static onDeviceState(iotCore,data,context) {
     //const state = msg.json;
     if(!data.json || !data.attributes) {
       console.warn(`Invalid device state payload`);
@@ -127,12 +124,11 @@ class DeviceManager {
 
   /**
    * pub/sub event handler for device logs
-   * @param {admin.app.App} admin  @see {@link https://firebase.google.com/docs/reference/admin/node/admin.app.App}
    * @param {functions.pubsub.Message} data @see https://firebase.google.com/docs/reference/functions/functions.pubsub.Message
    * @param {EventContext} context @see https://firebase.google.com/docs/reference/functions/functions.EventContext
    * @returns {Promise<boolean>}
    */
-  static onDeviceLogs(admin,data, context) {
+  static onDeviceLogs(data, context) {
     if(data && data.json && data.attributes) {
       const deviceId = data.attributes.deviceId;
       if(deviceId) {
